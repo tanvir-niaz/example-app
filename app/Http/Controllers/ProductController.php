@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -13,47 +12,42 @@ class ProductController extends Controller
             'name' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'discount' => ['numeric', 'min:0'],
-            'quantity' => ['required', 'numeric', 'min:0'] 
+            'quantity' => ['required', 'numeric', 'min:0']
         ]);
 
-        
         if (!isset($incomingFields['discount'])) {
             $incomingFields['discount'] = 0;
         }
-        // var_dump($incomingFields);
-        
-        $product = Product::create([
-            'name' => $incomingFields['name'],
-            'price' => $incomingFields['price'],
-            'discount' => $incomingFields['discount'],
-            'quantity' => $incomingFields['quantity']
-        ]);
+
+        $product = Product::create($incomingFields);
 
         return response()->json($product, 201);
     }
 
-    public function getProducts(){
-        $products=Product::all();
-        return response()->json($products,200);
-    }
-
-    public function getProductById($id){
-        // var_dump($id);
-        $product=Product::find($id);
-        return response()->json($product,200);
-    }
-
-    public function updateProductById(Request $request, $product_id)
+    public function index(Request $request)
     {
-        var_dump((int)$product_id);
-        $incomingField = $request->validate([
+        $products = Product::all();
+        return response()->json($products);
+    }
+
+    public function getProductById($id)
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+        return response()->json($product, 200);
+    }
+
+    public function updateProductById(Request $request, $id)
+    {
+        $incomingFields = $request->validate([
             'name' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'discount' => ['numeric', 'min:0'],
-            'quantity' => ['required', 'numeric', 'min:0'] 
+            'quantity' => ['required', 'numeric', 'min:0']
         ]);
-        $product=Product::find($product_id);
-        var_dump($product);
+
         try {
             $product = Product::findOrFail($id);
 
@@ -67,6 +61,12 @@ class ProductController extends Controller
         }
     }
 
-    
-
+    public function deleteProductById($id){
+        $product=Product::find($id);
+        if(!$product){
+            return reponse()->json("Product not found ",401);
+        }
+        $product->delete();
+        return response()->json("Product deleted successfuly",201);
+    }
 }

@@ -19,16 +19,18 @@ Route::get('/', function () {
     return view('home');
 });
 
+Route::post("/register", [UserController::class, 'register']);
 
-Route::post("/register",[UserController::class,'register']);
+Route::post("/signin", [UserController::class, 'signin']);
 
-Route::post("/signin",[UserController::class,'signin']);
+Route::post("/product", [ProductController::class, 'createProduct']);
 
-Route::post("/product",[ProductController::class,'createProduct']);
+Route::get("/product", [ProductController::class, 'index']);
 
-Route::get("/product",[ProductController::class,'getProducts']);
+Route::get("/product/{id}", [ProductController::class, 'getProductById']);
 
-Route::get("/product/{id}",[ProductController::class,'getProductById']);
+Route::patch("/product/{id}", [ProductController::class, 'updateProductById']);
 
-Route::patch("/product/{product_id}", [ProductController::class, 'updateProductById']);
+Route::delete("/product/{id}",[ProductController::class,'deleteProductById']);
+
 
