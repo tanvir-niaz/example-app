@@ -14,11 +14,11 @@
         <input type="password"  name="password" placeholder="password">
         <button>Submit</button>
     </form>
-    <form action="/signin" method="POST">
+    {{-- <form action="/signin" method="POST">
         @csrf
         <input type="email" name="email" placeholder="email">
         <input type="password"  name="password" placeholder="password">
         <button>Submit</button>
-    </form>
+    </form> --}}
 </body>
 </html>

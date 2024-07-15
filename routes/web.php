@@ -19,13 +19,13 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::post("/register", [UserController::class, 'register']);
+// Route::post("/register", [UserController::class, 'register']);
 
-Route::post("/signin", [UserController::class, 'signin']);
+
 
 Route::post("/product", [ProductController::class, 'createProduct']);
 
-Route::get("/product", [ProductController::class, 'index']);
+Route::get("/product", [ProductController::class, 'GetAllProducts']);
 
 Route::get("/product/{id}", [ProductController::class, 'getProductById']);
 
@@ -33,4 +33,6 @@ Route::patch("/product/{id}", [ProductController::class, 'updateProductById']);
 
 Route::delete("/product/{id}",[ProductController::class,'deleteProductById']);
 
-
+// Route::get("/test/{name}/{id?}",function($name,$id=null){
+//    echo $name . " " . $id;
+// });

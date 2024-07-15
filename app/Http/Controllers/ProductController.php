@@ -1,8 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
+
 
 class ProductController extends Controller
 {
@@ -14,20 +18,37 @@ class ProductController extends Controller
             'discount' => ['numeric', 'min:0'],
             'quantity' => ['required', 'numeric', 'min:0']
         ]);
+        try{
+            if (!isset($incomingFields['discount'])) {
+                $incomingFields['discount'] = 0;
+            }
+    
+            $product = Product::create($incomingFields);
+            $postToRequestToAnotherServer = Http::post('http://127.0.0.1:8001/product', $incomingFields);
+            Log::info(__METHOD__ . " Error",[$postToRequestToAnotherServer]);
+    
+            if ($postToRequestToAnotherServer->failed()) {
+                return response()->json(['error' => 'Failed to send product to another server'], 500);
+            }
+            $products=Product::paginate(7);
+            return view('product',['products'=>$products]);
 
-        if (!isset($incomingFields['discount'])) {
-            $incomingFields['discount'] = 0;
+        }catch(ValidationException $e){
+            dd($e);
+            
+        }catch(Exception $e){
+            dd($e);
         }
 
-        $product = Product::create($incomingFields);
-
-        return response()->json($product, 201);
+        
     }
 
-    public function index(Request $request)
+    public function GetAllProducts(Request $request)
     {
-        $products = Product::all();
-        return response()->json($products);
+        $products = Product::paginate(7);
+        
+        return view('product',compact('products'));
+        // return response()->json($products);
     }
 
     public function getProductById($id)
